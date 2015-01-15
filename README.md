@@ -6,6 +6,7 @@ Developed for tests of LSST stack at CC-IN2P3    (July 2013)
 R. Ansari ,  Univ. Paris Sud , LAL IN2P3/CNRS  
    - Version V 1.0 : July 2013 
    - Version V 1.1 : August 2013 
+   - Repository created on GitHub on 15 January 2015 
 
 
 spypracc should be launched by the process for which one wants to determine the 

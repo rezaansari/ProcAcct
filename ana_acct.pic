@@ -1,0 +1,45 @@
+## Create table (N-tuple and read in the acct file)
+## Note that the (%) - including the parenthesis should be replaced by a space in the file
+# Define the file name
+ACCTFILE = 'xxxx.log' 
+if ( $# > 0 )  then
+  set ACCTFILE  $1
+endif
+# create the table 
+del acct
+newnt acct tm cpu ut st etime percpu vsz rss ioread iowrite iordr iowrr rnpr rnth npr 
+# Read in the table from the file
+echo '---- reading accounting file' $ACCTFILE
+ntfrascii acct $ACCTFILE
+listobjs 
+print acct 
+
+# define the font for the axis 
+setaxesatt 'font=helvetica,bold,16 fixedfontsize minorticks' 
+
+## CPU-time & IO plots 
+newwin 1 2 600 800 
+plot2d acct tm cpu 1 'cpts line=solid,2 black nsta notit'
+setaxelabels 'time (s)' 'cpu-time (s)' 'font=helvetica,bolditalic,16 black' 
+# addtext 20 100 'tge.sh : CPU-time' 'font=helvetica,bold,20 black' 
+addtitle 'CPU-time (s)' ' ' 'font=helvetica,bold,20 black'
+plot2d acct tm ((iowrite>ioread)?iowrite:ioread)/1024 1 'grey nsta notit'
+plot2d acct tm iowrite/1024 1 'same cpts line=solid,2 red nsta notit'
+plot2d acct tm ioread/1024 1 'cpts line=solid,2 nsta notit same blue'
+setaxelabels 'time (s)' 'IO  (MB)' 'font=helvetica,bolditalic,16 black' 
+# addtext 20 1000 'tge.sh : Write (MB)' 'font=helvetica,bold,20 red' 
+# addtext 20 800 'tge.sh : Read (MB)' 'font=helvetica,bold,20 blue' 
+addtitle 'IO (MB) red:write, blue:read' ' ' 'font=helvetica,bold,20 black'
+w2ps
+## CPU-time & n-thread plot 
+newwin 1 2 600 800 
+plot2d acct tm cpu 1 'cpts line=solid,2 black nsta notit'
+setaxelabels 'time (s)' 'cpu-time (s)' 'font=helvetica,bolditalic,16 black' 
+# addtext 20 100 'tge.sh : CPU-time' 'font=helvetica,bold,20 black'
+addtitle 'CPU-time (s)' ' ' 'font=helvetica,bold,20 black' 
+plot2d acct tm rnth 1 'cpts line=solid,2 nsta notit navyblue'
+setaxelabels 'time (s)' 'N Threads' 'font=helvetica,bolditalic,16 black' 
+# addtext 20 7 'tge.sh : N-Threads' 'font=helvetica,bold,20 navyblue' 
+addtitle 'Tot-Nthreads (running processes)' ' ' 'font=helvetica,bold,20 navyblue'
+w2ps
+
