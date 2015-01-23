@@ -23,7 +23,7 @@ Logs = []
 if __name__ == '__main__':
 
     if len(sys.argv) < 3:
-        print 'spypracc.py <logfile> <imagefile>'
+        print 'plotaccounting.py <input_logfile> <output_imagefile>'
         exit()
 
     logfile = sys.argv[1]
