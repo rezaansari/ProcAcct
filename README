@@ -42,3 +42,24 @@ README		procacct.cc	spypasighand.cc	spypracc.cc	timing.c
  - make sure that the directory Objs exists (or create it) 
  - check that the correct flag (Darwin, or Linux) is specified in the makefile (CPPFLAGS)
  - type make 
+
+
+===================================================================
+plotaccounting.py tool to plot the accounting results produced by the spypracc program.
+
+When the spypracc program is launched, a text file is produced.
+
+The format of this file is the following:
+ - the first line describes accounting variable that has been measured
+ - each subsequent line contains one measure of the accounting variable
+
+the plotaccounting.py parses the output log file and produces a page of plots showing
+the evolution of every such variable:
+
+Syntax of the program:
+
+plotaccounting.py <input_logfile> <output_imagefile>
+
+eg:
+plotaccounting.py /tmp/acct_9209788.log foo.jpg
+
