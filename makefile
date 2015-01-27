@@ -13,8 +13,8 @@ clean:
 	rm Objs/*
 
 CXX = g++ 
-CPPFLAGS = -DDarwin 
-# CPPFLAGS = -DLinux 
+# CPPFLAGS = -DDarwin 
+CPPFLAGS = -DLinux 
 
 ## --- spypracc
 Objs/spypracc : Objs/spypracc.o Objs/procacct.o Objs/spypasighand.o Objs/timing.o
