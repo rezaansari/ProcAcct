@@ -7,10 +7,10 @@ if ( $# > 0 )  then
 endif
 # create the table 
 del acct
-newnt acct tm cpu ut st etime percpu vsz rss ioread iowrite iordr iowrr rnpr rnth npr 
+newnt acct tm etime cpu cpu_p100  max_vsz max_rss ioread iowrite ioread_rate iowrite_rate nproc nthread cpu_r cpu_p100_r sum_vsz_r sum_rss_r ioread_r iowrite_r ioread_rate_r iowrite_rate_r nproc_r nthread_r
 # Read in the table from the file
 echo '---- reading accounting file' $ACCTFILE
-ntfrascii acct $ACCTFILE
+ntfrascii acct $ACCTFILE  0  ;  
 listobjs 
 print acct 
 
@@ -24,7 +24,7 @@ setaxelabels 'time (s)' 'cpu-time (s)' 'font=helvetica,bolditalic,16 black'
 # addtext 20 100 'tge.sh : CPU-time' 'font=helvetica,bold,20 black' 
 addtitle 'CPU-time (s)' ' ' 'font=helvetica,bold,20 black'
 plot2d acct tm ((iowrite>ioread)?iowrite:ioread)/1024 1 'grey nsta notit'
-plot2d acct tm iowrite/1024 1 'same cpts line=solid,2 red nsta notit'
+plot2d acct tm iowrite/2014 1 'same cpts line=solid,2 red nsta notit'
 plot2d acct tm ioread/1024 1 'cpts line=solid,2 nsta notit same blue'
 setaxelabels 'time (s)' 'IO  (MB)' 'font=helvetica,bolditalic,16 black' 
 # addtext 20 1000 'tge.sh : Write (MB)' 'font=helvetica,bold,20 red' 
@@ -37,9 +37,20 @@ plot2d acct tm cpu 1 'cpts line=solid,2 black nsta notit'
 setaxelabels 'time (s)' 'cpu-time (s)' 'font=helvetica,bolditalic,16 black' 
 # addtext 20 100 'tge.sh : CPU-time' 'font=helvetica,bold,20 black'
 addtitle 'CPU-time (s)' ' ' 'font=helvetica,bold,20 black' 
-plot2d acct tm rnth 1 'cpts line=solid,2 nsta notit navyblue'
+plot2d acct tm nthread_r 1 'cpts line=solid,2 nsta notit navyblue'
 setaxelabels 'time (s)' 'N Threads' 'font=helvetica,bolditalic,16 black' 
 # addtext 20 7 'tge.sh : N-Threads' 'font=helvetica,bold,20 navyblue' 
 addtitle 'Tot-Nthreads (running processes)' ' ' 'font=helvetica,bold,20 navyblue'
 w2ps
 
+newwin 1 2 600 800 
+plot2d acct tm sum_vsz_r/1024 1 'cpts line=solid,2 black nsta notit'
+setaxelabels 'time (s)' 'Sum-Virtual Memory (MB)' 'font=helvetica,bolditalic,16 black' 
+plot2d acct tm sum_rss_r/1024 1 'cpts line=solid,2 red nsta notit'
+setaxelabels 'time (s)' 'Sum-Resident Memory (MB)' 'font=helvetica,bolditalic,16 black' 
+
+newwin 1 2 600 800 
+plot2d acct tm max_vsz_r/1024 1 'cpts line=solid,2 black nsta notit'
+setaxelabels 'time (s)' 'Max-Virtual Memory (MB)' 'font=helvetica,bolditalic,16 black' 
+plot2d acct tm max_rss_r/1024 1 'cpts line=solid,2 red nsta notit'
+setaxelabels 'time (s)' 'Max-Resident Memory (MB)' 'font=helvetica,bolditalic,16 black' 

@@ -5,8 +5,9 @@ fi
 ACCTFILE=$1
 echo '--- Processing spypracc log file: ' $ACCTFILE 
 BOUTFILE=`basename $ACCTFILE`
-OUTFILE=/tmp/$BOUTFILE
-sed 's/(%)//' $ACCTFILE > $OUTFILE
+#  S'il y a des caracteres 
+# OUTFILE=/tmp/$BOUTFILE
+# sed 's/(%)//' $ACCTFILE > $OUTFILE
 spiapp -term -exec ana_acct.pic $OUTFILE
 stty sane
 

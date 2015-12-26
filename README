@@ -6,7 +6,8 @@ sharing a common parent process.
 Developed for tests of LSST stack at CC-IN2P3    
 R. Ansari ,  Univ. Paris Sud , LAL IN2P3/CNRS  
    - Version V 1.0 : July 2013 
-   - Version V 1.1 : August 2013 
+   - Version V 1.1 : August 2013
+   - Version V 2.0 : December 2015
 
 
 spypracc should be launched by the process for which one wants to determine the 
@@ -19,6 +20,11 @@ file prevents a second spypracc to be lauched for the same parent process.
 The lock file is removed by stopspypracc, after being used to identify the 
 spypracc process to be terminated. 
 
+V2.0 (Dec 2015) :
+  Introduction of the class CumulProcessInfo , enhancement of MyProcessAccounting class
+  which uses now CumulProcessInfo. Corrected computation of memory usage.
+  Additional information and better formatting for the
+  resource usage log file 
 ------------------------------------------------------------------------------------
 spypracc: resource usage (CPU,I/O ...) statistics and summary (version V= 1.1) 
     should be launched as a background process by the process for which 

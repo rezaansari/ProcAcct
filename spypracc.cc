@@ -32,21 +32,6 @@ void StopSpyRAcc()
   my_fg_run_=false;
 }
 
-/*-- Fonction --*/
-void SummaryInfo(ProcessInfo& sum)
-{
-  double telapsed=((sum.elapsed_time_ms_>0)?(double)sum.elapsed_time_ms_:1.);
-  cout << " CPU: total,user,sys= " << sum.cputime_ms_/1000. << "," << sum.utime_ms_/1000. 
-       << "," << sum.systime_ms_/1000. << " s ,Elapsed= " << sum.elapsed_time_ms_/1000.
-       << " s %CPU=" << 100.*sum.cputime_ms_/telapsed 
-       << "\n VSZ,RSS=" <<  sum.virtmemsz_kb_ << "," << sum.resmemsz_kb_ << " kb"
-       << " Running NChild,NThr="  << sum.running_nchildren_ << "," <<  sum.running_nthr_
-       << "  TotNChild,NThr="  << sum.tot_nchildren_ << "," <<  sum.nthr_
-       << "\n IO,Read,Write (kb): " << (double)sum.io_read_bytes_/1024. << "," << (double)sum.io_write_bytes_/1024. 
-       << " IO Rate (kb/s): " << (double)sum.io_read_bytes_/1024./(telapsed/1000.) << ","
-       << (double)sum.io_write_bytes_/1024./(telapsed/1000.) << endl;
-  return;
-}
 
 //---------------------------------------------------------
 //------------------- MAIN PROGRAM ------------------------
@@ -96,7 +81,7 @@ int main(int narg, char* arg[])
     lockfile << mypid << endl;
   }
 
-  ProcessInfo sum;
+  CumulProcessInfo sum;
   try {
     double interval = atof(arg[1]);
     useconds_t slus=(interval*1.e6);
@@ -113,8 +98,9 @@ int main(int narg, char* arg[])
 
     MyProcessAccounting proca;
     ofstream outlog(arg[2]);
-    outlog << "# log_time cpu_time user_time sys_time elapsed_time %CPU (%) mem_vsz mem_rss io_read_kb io_write_kb io_read_kb/s io_write_kb/s run_nproc run_nthr tot_nproc" << endl;
-    outlog << "#  time in seconds, memory & IO in kb (kilo-bytes) - run_: running" << endl;
+
+    CumulProcessInfo::LogFileHeader(outlog);
+
     my_fg_run_=true;
     size_t cnt=0;
     while (my_fg_run_) {
@@ -122,33 +108,27 @@ int main(int narg, char* arg[])
       if (cnt%log_modulo == 0) {
 	time(&tmc);
 	double tmlog=difftime(tmc,tm0);
-	sum=proca.getParentSummary();
-	double telapsed=((sum.elapsed_time_ms_>0)?(double)sum.elapsed_time_ms_:1.);
-	outlog << tmlog << " " << (double)sum.cputime_ms_/1000. << " " << (double)sum.utime_ms_/1000. 
-	       << " " << (double) sum.systime_ms_ << " "  
-	       << (double)sum.elapsed_time_ms_/1000. << " " << 100.*sum.cputime_ms_/telapsed << " (%) " 
-	       << sum.virtmemsz_kb_ << " " << sum.resmemsz_kb_ << " "  
-	       << (double)sum.io_read_bytes_/1024. << " " << (double)sum.io_write_bytes_/1024. << " " 
-	       << (double)sum.io_read_bytes_/1024./(telapsed/1000.) << " " 
-	       << (double)sum.io_write_bytes_/1024./(telapsed/1000.) << " " 
-	       << sum.running_nchildren_ << " " << sum.running_nthr_ << " "
-	       << sum.tot_nchildren_-(cnt+1) << endl;
+	sum.Reset();
+	sum=proca.getSummary();
+	sum.LogFileOutput(outlog, tmlog);
       //DBG      cout << sum;
       }
       usleep(slus);   cnt++;
     }
-  cout << " ----- spyracc ended: Parent process resource usage summary -------" << endl;
-  SummaryInfo(sum);
+  cout << " ----- spyracc ended: All Parent's process children resource usage summary -------" << endl;
+  proca.update();
+  CumulProcessInfo sumf=proca.getSummary();
+  cout << sumf;
   cout << " ----- spyrac process usage summary -------" << endl;
-  sum=proca.getSelfSummary();
-  SummaryInfo(sum);
+  sumf=proca.getSelfSummary();
+  cout << sumf; 
   cout << "-------------------------------------------------------------------------------" << endl;
   }
   catch (SigCatch & e) {
     cerr << " spypracc.cc: Catched SigCatch "  
          << " - what()= " << e.what() << endl;
     cout << " ----- spyracc ended: Parent process resource usage summary -------" << endl;
-    SummaryInfo(sum);
+    cout << sum;
     cout << "-------------------------------------------------------------------------------" << endl;
     rc = 0;
   }
