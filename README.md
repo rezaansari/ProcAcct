@@ -7,5 +7,6 @@ R. Ansari ,  Univ. Paris Sud , LAL IN2P3/CNRS
    - Version V 1.0 : July 2013 
    - Version V 1.1 : August 2013 
    - Repository created on GitHub on 15 January 2015 
+   - Version V 2.0 : December 2015 
 
-  See the README file 
+  See the README file for more information
